@@ -64,8 +64,15 @@ Tabelas de layout de newsletters são achatadas, e textos ocultos e pixels de ra
 
 No build step, no minified or third-party code. The .xpi contains exactly the
 files in the repository root: `manifest.json`, `background.js`, `mdconvert.js`,
-`icon.svg`. The HTML → Markdown conversion uses `DOMParser` on the message body
-and never inserts the parsed content into a live document.
+`icon.svg`, `icon-color.svg` and `LICENSE`. The HTML → Markdown conversion
+uses `DOMParser` on the message body and never inserts the parsed content into
+a live document.
+
+## Icon
+
+`store/icon-128.png` is the store icon, rendered from `icon-color.svg` (also
+the add-on's icon in the Add-ons Manager; the toolbar button keeps the
+one-color `icon.svg` so it follows the Thunderbird theme).
 
 ## Screenshots
 
