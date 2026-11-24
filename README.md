@@ -21,6 +21,13 @@ Email copied from an email client:
 --- end of email content ---
 ```
 
+## Install
+
+1. Download the `.xpi` from the [latest release](https://github.com/vitorjustin/thunderbird-copy-as-markdown/releases/latest).
+2. In Thunderbird: *Add-ons and Themes → ⚙ → Install Add-on From File…* and pick the file.
+
+Requires Thunderbird 128 or later.
+
 ## Usage
 
 - **Copy as .md** button in the message header toolbar (shows ✓ on success).
@@ -41,10 +48,6 @@ requests, collects no data and stores nothing.
 
 Permissions: `messagesRead` (read the message), `clipboardWrite` (copy the
 result), `menus` (message-list context menu).
-
-## Requirements
-
-Thunderbird 128 or later.
 
 ## Development
 
