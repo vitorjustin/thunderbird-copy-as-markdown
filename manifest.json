@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Copy Email as Markdown",
   "description": "Copy any email (subject, sender, recipients, date, attachments and body) as labeled Markdown, ready to paste into an AI agent.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": "Vitor Justin",
   "homepage_url": "https://github.com/vitorjustin/thunderbird-copy-as-markdown",
   "browser_specific_settings": {
@@ -27,7 +27,7 @@
     }
   },
   "icons": {
-    "48": "icon.svg",
-    "96": "icon.svg"
+    "48": "icon-color.svg",
+    "96": "icon-color.svg"
   }
 }

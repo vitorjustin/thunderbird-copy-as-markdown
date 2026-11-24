@@ -8,5 +8,5 @@ out="dist/copy-email-as-markdown-${version}.xpi"
 
 mkdir -p dist
 rm -f "$out"
-zip -q -X "$out" manifest.json background.js mdconvert.js icon.svg LICENSE
+zip -q -X "$out" manifest.json background.js mdconvert.js icon.svg icon-color.svg LICENSE
 echo "$out"
