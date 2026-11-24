@@ -1,0 +1,12 @@
+{
+  "name": "thunderbird-copy-as-markdown",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "build": "./build.sh"
+  },
+  "devDependencies": {
+    "jsdom": "24.1.3"
+  }
+}
