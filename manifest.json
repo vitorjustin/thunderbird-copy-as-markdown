@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Copy Email as Markdown",
+  "description": "Copy any email (subject, sender, recipients, date, attachments and body) as labeled Markdown, ready to paste into an AI agent.",
+  "version": "1.2.0",
+  "author": "Vitor Justin",
+  "homepage_url": "https://github.com/vitorjustin/thunderbird-copy-as-markdown",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "copy-email-as-md@vitorjustin",
+      "strict_min_version": "128.0"
+    }
+  },
+  "permissions": ["messagesRead", "clipboardWrite", "menus"],
+  "background": {
+    "scripts": ["mdconvert.js", "background.js"]
+  },
+  "message_display_action": {
+    "default_title": "Copy as .md",
+    "default_label": "Copy as .md",
+    "default_icon": "icon.svg"
+  },
+  "commands": {
+    "copy-as-markdown": {
+      "suggested_key": { "default": "Alt+Shift+M" },
+      "description": "Copy the current email as Markdown"
+    }
+  },
+  "icons": {
+    "48": "icon.svg",
+    "96": "icon.svg"
+  }
+}
