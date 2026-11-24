@@ -67,7 +67,17 @@ files in the repository root: `manifest.json`, `background.js`, `mdconvert.js`,
 `icon.svg`. The HTML → Markdown conversion uses `DOMParser` on the message body
 and never inserts the parsed content into a live document.
 
-## Screenshots to take
+## Screenshots
 
-1. An open email with the **Copy as .md** button visible (✓ badge after clicking).
-2. The copied Markdown pasted into an AI chat.
+`store/screenshot-{1,2,3}.png` (1280×800): the button, the pasted result in an
+AI chat, and the message-list context menu. They are illustrations rendered
+from `store/shots.html`; the pasted text in `store/pasted.js` is real output of
+the converter. To re-render after editing:
+
+```sh
+for s in 1 2 3; do
+  google-chrome --headless=new --hide-scrollbars --window-size=1280,800 \
+    --virtual-time-budget=4000 --screenshot="store/screenshot-$s.png" \
+    "file://$PWD/store/shots.html#s$s"
+done
+```

@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Store screenshots</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=block" rel="stylesheet">
+<style>
+  :root {
+    --bg1: #1d4ed8; --bg2: #0f766e;
+    --chrome: #f0f0f4; --chrome-2: #e4e4ea; --line: #d4d4dc;
+    --text: #1f2430; --muted: #6b7080; --accent: #0a84ff; --ok: #2e7d32;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1280px; height: 800px; overflow: hidden; background: #fff; }
+  body { font-family: Inter, "Segoe UI", system-ui, sans-serif; color: var(--text); font-size: 13px; }
+  .scene { display: none; width: 1280px; height: 800px; position: relative;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2)); padding: 28px 56px 0; }
+  .scene.on { display: block; }
+  .caption { color: #fff; text-align: center; margin-bottom: 22px; }
+  .caption h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; }
+  .caption p { font-size: 17px; opacity: .85; margin-top: 6px; }
+
+  .win { background: #fff; border-radius: 10px 10px 0 0; box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    overflow: hidden; height: 720px; display: flex; flex-direction: column; }
+  .titlebar { background: var(--chrome-2); height: 38px; display: flex; align-items: end; padding: 0 10px; gap: 4px; }
+  .tab { background: var(--chrome-2); padding: 8px 16px; border-radius: 8px 8px 0 0; color: var(--muted);
+    display: flex; gap: 8px; align-items: center; font-size: 12.5px; }
+  .tab.active { background: var(--chrome); color: var(--text); font-weight: 500; }
+  .dots { margin-left: auto; align-self: center; display: flex; gap: 14px; color: var(--muted); font-size: 14px; padding-right: 6px; }
+
+  .msghead { background: var(--chrome); border-bottom: 1px solid var(--line); padding: 12px 18px 14px; }
+  .row1 { display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; background: #c7d2fe; color: #3730a3;
+    display: grid; place-items: center; font-weight: 600; flex: none; }
+  .from b { font-weight: 600; } .from span { color: var(--muted); }
+  .toolbar { margin-left: auto; display: flex; gap: 5px; }
+  .btn { border: 1px solid var(--line); background: #fff; border-radius: 5px; padding: 5px 10px;
+    font-size: 12.5px; display: flex; align-items: center; gap: 6px; position: relative; white-space: nowrap; }
+  .btn svg { width: 15px; height: 15px; }
+  .btn.md { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(10,132,255,.25); font-weight: 600; }
+  .badge { position: absolute; top: -7px; left: -7px; background: var(--ok); color: #fff; font-size: 10px;
+    font-weight: 700; border-radius: 8px; padding: 1px 5px; line-height: 14px; }
+  .meta { margin: 10px 0 0 44px; color: var(--muted); line-height: 1.6; }
+  .meta b { color: var(--text); font-weight: 500; }
+  .subject { font-size: 18px; font-weight: 600; margin: 10px 0 0 44px; }
+  .attach { margin: 8px 0 0 44px; display: inline-flex; gap: 8px; align-items: center; border: 1px solid var(--line);
+    background: #fff; border-radius: 6px; padding: 5px 10px; font-size: 12px; }
+
+  .mailbody { padding: 22px 62px; font-size: 14.5px; line-height: 1.65; flex: 1; }
+  .mailbody p { margin-bottom: 12px; } .mailbody a { color: var(--accent); }
+  .mailbody ul { margin: 0 0 12px 20px; padding: 0; }
+  .mailbody table { border-collapse: collapse; margin-bottom: 12px; font-size: 13.5px; }
+  .mailbody th, .mailbody td { border: 1px solid var(--line); padding: 5px 14px; text-align: left; }
+  .mailbody th { background: #f6f6f9; }
+
+  .zoom { position: absolute; right: 70px; top: 300px; background: #fff; border-radius: 14px; padding: 22px 26px;
+    box-shadow: 0 18px 50px rgba(0,0,0,.35); border: 1px solid var(--line); width: 330px; }
+  .zoom .btn { font-size: 20px; padding: 10px 18px; gap: 10px; display: inline-flex; }
+  .zoom .btn svg { width: 24px; height: 24px; }
+  .zoom .badge { font-size: 15px; padding: 2px 8px; line-height: 20px; border-radius: 11px; top: -12px; left: -12px; }
+  .zoom p { margin-top: 16px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+  .zoom p b { color: var(--text); }
+  .zoom::before { content: ""; position: absolute; top: -12px; right: 120px; border: 12px solid transparent;
+    border-top: 0; border-bottom-color: #fff; right: 55px; }
+
+  /* chat */
+  .chat { display: flex; flex: 1; min-height: 0; }
+  .side { width: 220px; background: var(--chrome); border-right: 1px solid var(--line); padding: 16px 12px; color: var(--muted); }
+  .side .new { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; color: var(--text); font-weight: 500; margin-bottom: 16px; }
+  .side div.item { padding: 7px 10px; border-radius: 6px; margin-bottom: 2px; }
+  .side div.item.cur { background: var(--chrome-2); color: var(--text); }
+  .conv { flex: 1; padding: 14px 40px; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+  .bubble { max-width: 760px; border-radius: 14px; padding: 10px 16px; }
+  .user { align-self: flex-end; background: #eef2ff; border: 1px solid #dfe4fb; }
+  .user pre { font-family: "JetBrains Mono", monospace; font-size: 10.6px; line-height: 1.36; white-space: pre-wrap; color: #27304a; }
+  .user .ask { margin-top: 10px; font-size: 14px; font-weight: 500; }
+  .bot { align-self: flex-start; display: flex; gap: 10px; font-size: 14px; line-height: 1.55; max-width: 720px; }
+  .bot .ai { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, var(--bg1), var(--bg2)); flex: none; }
+  .label { color: #1d4ed8; font-weight: 600; }
+
+  /* 3-pane */
+  .three { display: flex; flex: 1; min-height: 0; position: relative; }
+  .folders { width: 200px; background: var(--chrome); border-right: 1px solid var(--line); padding: 14px 10px; line-height: 2.1; color: var(--text); }
+  .folders .cur { background: var(--chrome-2); border-radius: 6px; padding-left: 8px; margin-left: -8px; font-weight: 600; }
+  .folders .acct { color: var(--muted); font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; }
+  .list { flex: 1; }
+  .lhead, .lrow { display: grid; grid-template-columns: 26px 210px 1fr 130px; padding: 0 16px; align-items: center; }
+  .lhead { height: 32px; color: var(--muted); font-size: 12px; border-bottom: 1px solid var(--line); background: #fafafc; }
+  .lrow { height: 40px; border-bottom: 1px solid #eeeef3; }
+  .lrow.sel { background: #dbeafe; }
+  .lrow .d { color: var(--muted); text-align: right; }
+  .lrow.unread .s, .lrow.unread .f { font-weight: 600; }
+  .ctx { position: absolute; left: 520px; top: 120px; width: 250px; background: #fff; border: 1px solid var(--line);
+    border-radius: 8px; box-shadow: 0 14px 40px rgba(0,0,0,.25); padding: 5px; font-size: 13px; }
+  .ctx div { padding: 7px 12px; border-radius: 5px; display: flex; align-items: center; gap: 10px; }
+  .ctx div svg { width: 16px; height: 16px; }
+  .ctx .sep { height: 1px; background: var(--line); padding: 0; margin: 4px 6px; }
+  .ctx .hot { background: var(--accent); color: #fff; font-weight: 600; }
+  .ctx .k { margin-left: auto; color: var(--muted); font-size: 11.5px; }
+  .ctx .hot .k { color: #dbeafe; }
+  .cursor { position: absolute; width: 22px; height: 22px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="md" viewBox="0 0 16 16"><g fill="currentColor">
+    <path d="M1.5 3A1.5 1.5 0 0 0 0 4.5v7A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 14.5 3h-13zm0 1h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .5-.5z"/>
+    <path d="M2.5 10.5v-5h1.25L5 7.25 6.25 5.5H7.5v5H6.25V7.6L5 9.25 3.75 7.6v2.9H2.5zm8.25 0L8.75 8h1.25V5.5h1.5V8h1.25l-2 2.5z"/></g></symbol>
+  <symbol id="cur" viewBox="0 0 24 24"><path d="M3 2l15 11.5-6.6.9 3.9 7.6-2.6 1.3-3.9-7.7L3 20z" fill="#111" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+</svg>
+
+<template id="mailhead">
+  <div class="titlebar">
+    <div class="tab">Inbox</div>
+    <div class="tab active">Q4 launch plan — final review ✕</div>
+    <div class="dots"><span>—</span><span>▢</span><span>✕</span></div>
+  </div>
+  <div class="msghead">
+    <div class="row1">
+      <div class="avatar">MC</div>
+      <div class="from"><b>Marina Costa</b> <span>&lt;marina@example.com&gt;</span></div>
+      <div class="toolbar">
+        <div class="btn">↩ Reply</div><div class="btn">↩↩ Reply All</div><div class="btn">↪ Forward</div>
+        <div class="btn">Archive</div><div class="btn">Delete</div>
+        <div class="btn md"><span class="badge">✓</span><svg><use href="#md"/></svg>Copy as .md</div>
+      </div>
+    </div>
+    <div class="meta"><b>To</b> Product Team &lt;team@example.com&gt; &nbsp;·&nbsp; <b>Cc</b> Lucas Prado &lt;lucas@example.com&gt; &nbsp;·&nbsp; 9:14 AM</div>
+    <div class="subject">Q4 launch plan — final review</div>
+    <div class="attach">📎 q4-timeline.pdf <span style="color:var(--muted)">184 KB</span></div>
+  </div>
+</template>
+
+<!-- Scene 1 -->
+<section class="scene" id="s1">
+  <div class="caption"><h1>One click copies the whole email as Markdown</h1>
+    <p>Title, sender, recipients, date, attachments and body — on your clipboard</p></div>
+  <div class="win">
+    <div data-tpl="mailhead"></div>
+    <div class="mailbody">
+      <p>Hi team,</p>
+      <p>Here is the <b>final plan</b> for the Q4 launch. Full timeline in the <a>project board</a>.</p>
+      <ul><li>Freeze features on <b>Dec 2</b></li><li>QA sign-off by Dec 9</li><li>Launch on <b>Dec 12</b></li></ul>
+      <table><tr><th>Owner</th><th>Task</th></tr><tr><td>Marina</td><td>Release notes</td></tr><tr><td>Lucas</td><td>Store listing</td></tr></table>
+      <p>Can you confirm your dates by Friday?</p>
+      <p>Thanks,<br>Marina</p>
+    </div>
+  </div>
+  <div class="zoom">
+    <div class="btn md"><span class="badge">✓</span><svg><use href="#md"/></svg>Copy as .md</div>
+    <p><b>✓ means copied.</b> Also on <b>Alt+Shift+M</b>, or right-click messages in the list.</p>
+  </div>
+</section>
+
+<!-- Scene 2 -->
+<section class="scene" id="s2">
+  <div class="caption"><h1>Paste it into any AI chat</h1>
+    <p>Every field is labeled, so the agent knows exactly what it is reading</p></div>
+  <div class="win">
+    <div class="titlebar"><div class="tab active">AI Assistant</div><div class="dots"><span>—</span><span>▢</span><span>✕</span></div></div>
+    <div class="chat">
+      <div class="side"><div class="new">+ New chat</div><div class="item cur">Q4 launch reply</div><div class="item">Trip itinerary</div><div class="item">Invoice questions</div></div>
+      <div class="conv">
+        <div class="bubble user"><pre id="pasted"></pre>
+          <div class="ask">Draft a short reply confirming my dates.</div></div>
+        <div class="bot"><div class="ai"></div><div>Here's a reply to Marina, confirming the <b>Dec 2</b> freeze and that the store listing will be ready before the <b>Dec 12</b> launch…</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Scene 3 -->
+<section class="scene" id="s3">
+  <div class="caption"><h1>Copy several emails at once</h1>
+    <p>Select messages, right-click, <b>Copy as .md</b> — each one is numbered for the agent</p></div>
+  <div class="win">
+    <div class="titlebar"><div class="tab active">Inbox</div><div class="dots"><span>—</span><span>▢</span><span>✕</span></div></div>
+    <div class="three">
+      <div class="folders"><div class="acct">work account</div><div class="cur">Inbox</div><div>Drafts</div><div>Sent</div><div>Archive</div><div>Junk</div><div>Trash</div></div>
+      <div class="list">
+        <div class="lhead"><span></span><span>From</span><span>Subject</span><span style="text-align:right">Date</span></div>
+        <div class="lrow sel unread"><span>★</span><span class="f">Marina Costa</span><span class="s">Q4 launch plan — final review</span><span class="d">9:14 AM</span></div>
+        <div class="lrow sel"><span></span><span class="f">Lucas Prado</span><span class="s">Re: Store listing copy</span><span class="d">8:52 AM</span></div>
+        <div class="lrow sel"><span></span><span class="f">Marina Costa</span><span class="s">Q4 launch plan — draft</span><span class="d">Yesterday</span></div>
+        <div class="lrow"><span></span><span class="f">Billing</span><span class="s">Your November invoice</span><span class="d">Yesterday</span></div>
+        <div class="lrow unread"><span></span><span class="f">Ana Ribeiro</span><span class="s">Design review notes</span><span class="d">Mon</span></div>
+        <div class="lrow"><span></span><span class="f">Travel Desk</span><span class="s">Itinerary for Dec 15</span><span class="d">Mon</span></div>
+        <div class="lrow"><span></span><span class="f">Lucas Prado</span><span class="s">QA checklist</span><span class="d">Sun</span></div>
+        <div class="lrow"><span></span><span class="f">Newsletter</span><span class="s">This week in product</span><span class="d">Sat</span></div>
+      </div>
+      <div class="ctx">
+        <div>Open in New Tab</div><div>Open in New Window</div><div class="sep"></div>
+        <div>Reply</div><div>Forward</div><div class="sep"></div>
+        <div class="hot"><svg><use href="#md"/></svg>Copy as .md</div>
+        <div class="sep"></div><div>Archive</div><div>Mark as Read</div><div>Delete</div>
+      </div>
+      <svg class="cursor" style="left:640px; top:292px"><use href="#cur"/></svg>
+    </div>
+  </div>
+</section>
+
+<script src="pasted.js"></script>
+<script>
+  const tpl = document.getElementById("mailhead").innerHTML;
+  document.querySelectorAll('[data-tpl="mailhead"]').forEach((el) => (el.outerHTML = tpl));
+  document.getElementById("pasted").textContent = PASTED;
+  const id = location.hash.slice(1) || "s1";
+  document.getElementById(id).classList.add("on");
+</script>
+</body>
+</html>
